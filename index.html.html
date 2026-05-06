@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚔️ Pendragon Pool Generator</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: #0d0d1a;
+            background-image: radial-gradient(ellipse at top, #1a1a3e 0%, #0d0d1a 70%);
+            color: #e8d5a3;
+            font-family: 'Georgia', serif;
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        header { text-align: center; margin-bottom: 30px; }
+
+        h1 {
+            font-size: 2.5em;
+            color: #d4af37;
+            text-shadow: 0 0 20px rgba(212,175,55,0.5);
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #aaa;
+            font-style: italic;
+            margin-bottom: 6px;
+            font-size: 1em;
+        }
+
+        .rules-box {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(212,175,55,0.4);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 28px;
+            line-height: 1.7;
+            font-size: 0.92em;
+        }
+
+        .rules-box h3 { color: #d4af37; margin-bottom: 8px; font-size: 1em; }
+
+        .rules-box ul { padding-left: 20px; }
+        .rules-box li { margin-bottom: 4px; }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 36px;
+            font-size: 1.1em;
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #d4af37, #a07d20);
+            color: #0d0d1a;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(212,175,55,0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212,175,55,0.5);
+        }
+
+        .btn:active { transform: translateY(0); }
+
+        .btn-row {
+            text-align: center;
+            margin-bottom: 36px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid #d4af37;
+            color: #d4af37;
+            padding: 12px 24px;
+            font-size: 0.9em;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(212,175,55,0.1);
+        }
+
+        .section { margin-bottom: 44px; }
+
+        .section h2 {
+            color: #d4af37;
+            font-size: 1.4em;
+            margin-bottom: 4px;
+            border-bottom: 1px solid rgba(212,175,55,0.3);
+            padding-bottom: 8px;
+        }
+
+        .section-desc {
+            color: #999;
+            font-style: italic;
+            font-size: 0.85em;
+            margin-bottom: 16px;
+            margin-top: 4px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+            gap: 14px;
+        }
+
+        .card-item { text-align: center; }
+
+        .card-img-wrapper {
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid transparent;
+            transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+            background: #1a1a3e;
+            aspect-ratio: 63/88;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-item a:hover .card-img-wrapper {
+            border-color: #d4af37;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(212,175,55,0.3);
+        }
+
+        .card-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .card-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            color: #555;
+            font-size: 0.72em;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .card-placeholder .spinner {
+            display: block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #333;
+            border-top-color: #d4af37;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 6px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .card-name {
+            color: #c8b896;
+            font-size: 0.72em;
+            margin-top: 6px;
+            padding: 0 4px;
+            line-height: 1.3;
+        }
+
+        .honor-note {
+            background: rgba(212,175,55,0.08);
+            border-left: 3px solid #d4af37;
+            padding: 10px 16px;
+            margin-bottom: 28px;
+            font-style: italic;
+            color: #ccc;
+            font-size: 0.88em;
+            border-radius: 0 6px 6px 0;
+        }
+
+        #results { display: none; }
+
+        .pool-id {
+            text-align: center;
+            color: #666;
+            font-size: 0.78em;
+            margin-bottom: 20px;
+            font-family: monospace;
+            letter-spacing: 1px;
+        }
+
+        footer {
+            text-align: center;
+            color: #555;
+            font-size: 0.72em;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #222;
+            line-height: 1.8;
+        }
+
+        footer a { color: #d4af37; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+
+        .copy-success {
+            color: #4caf50;
+            font-size: 0.8em;
+            margin-left: 8px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .copy-success.show { opacity: 1; }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.7em; }
+            .card-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <header>
+        <h1>⚔️ Pendragon Pool Generator</h1>
+        <p class="subtitle">Community MTG Tournament — Simply Cyber Edition</p>
+    </header>
+
+    <div class="rules-box">
+        <h3>📜 How It Works</h3>
+        <ul>
+            <li>Click <strong>Generate My Pool</strong> to receive your personal random selection of <strong>15 common creatures</strong> (your Arthur candidates) and <strong>10 legendary equipments</strong> (your Excalibur candidates).</li>
+            <li>Pick <strong>one Arthur</strong> and <strong>one Excalibur</strong> — these go in your command zone.</li>
+            <li>Build a <strong>98-card singleton deck</strong> using any legal common cards (all 98 must be common).</li>
+            <li>Your deck's <strong>color identity</strong> = the combined colors of your Arthur + Excalibur.</li>
+            <li>Starting life: <strong>30</strong> &nbsp;|&nbsp; Commander damage: <strong>21</strong></li>
+            <li>Bring your finished deck to the event. Good luck! ⚔️</li>
+        </ul>
+    </div>
+
+    <div class="btn-row">
+        <button class="btn generate-btn" onclick="generate()">⚔️ Generate My Pool</button>
+    </div>
+    <p id="pool-stats" style="text-align:center;color:#666;font-size:0.8em;margin-top:-20px;margin-bottom:30px;font-family:monospace;"></p>
+
+    <div id="results">
+        <div class="pool-id" id="pool-id"></div>
+
+        <div class="honor-note">
+            🤝 <strong>Honor System:</strong> This is your pool — no rerolling to fish for better picks! Choose one Arthur and one Excalibur, then go build something awesome.
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-secondary" onclick="copyPoolText()">📋 Copy Pool as Text <span class="copy-success" id="copy-ok">✓ Copied!</span></button>
+            <button class="btn btn-secondary" onclick="window.print()">🖨️ Print / Save</button>
+        </div>
+
+        <div class="section">
+            <h2>⚔️ Your Arthurs — Pick One Common Creature</h2>
+            <p class="section-desc">This becomes your commander. It must have a common printing. Click any card to view it on Scryfall.</p>
+            <div id="commons-grid" class="card-grid"></div>
+        </div>
+
+        <div class="section">
+            <h2>✨ Your Excaliburs — Pick One Legendary Equipment</h2>
+            <p class="section-desc">This legendary equipment starts in your command zone. It can be any rarity. Click any card to view it on Scryfall.</p>
+            <div id="equipment-grid" class="card-grid"></div>
+        </div>
+
+        <div class="btn-row" style="margin-top: 10px;">
+            <button class="btn generate-btn" onclick="generate()">🔄 Regenerate Pool</button>
+        </div>
+    </div>
+
+    <footer>
+        Card images &amp; data via <a href="https://scryfall.com" target="_blank">Scryfall</a> &nbsp;•&nbsp;
+        Pendragon format by the MTG community &nbsp;•&nbsp;
+        <a href="https://sites.google.com/view/pendragonmtg/basic-rules-guidelines" target="_blank">Official Pendragon Rules</a><br>
+        Card pool sourced directly from Scryfall exports — common creatures &amp; legendary equipment only.
+    </footer>
+
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// STATE — populated from CSV files at load time
+// ─────────────────────────────────────────────
+let COMMONS   = [];
+let EQUIPMENT = [];
+let currentCommons   = [];
+let currentEquipment = [];
+
+// ─────────────────────────────────────────────
+// CSV PARSING
+// ─────────────────────────────────────────────
+
+// Parse a single CSV line, handling quoted fields with commas inside
+function parseCSVLine(line) {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') {
+            inQuotes = !inQuotes;
+        } else if (ch === ',' && !inQuotes) {
+            result.push(current.trim());
+            current = '';
+        } else {
+            current += ch;
+        }
+    }
+    result.push(current.trim());
+    return result;
+}
+
+// Parse full CSV text into array of row objects keyed by header
+function parseCSV(text) {
+    const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim().split('\n');
+    const headers = parseCSVLine(lines[0]);
+    return lines.slice(1)
+        .filter(l => l.trim())
+        .map(line => {
+            const vals = parseCSVLine(line);
+            const obj = {};
+            headers.forEach((h, i) => { obj[h] = vals[i] || ''; });
+            return obj;
+        });
+}
+
+// For DFC cards like "Delver of Secrets // Insectile Aberration",
+// use only the front-face name for display and Scryfall lookup
+function frontFaceName(name) {
+    return name.split(' // ')[0].trim();
+}
+
+// ─────────────────────────────────────────────
+// LOAD CARD DATA FROM CSV FILES
+// ─────────────────────────────────────────────
+async function loadCardData() {
+    const [commonsText, equipmentText] = await Promise.all([
+        fetch('scryfall_common_creatures.csv').then(r => {
+            if (!r.ok) throw new Error('Could not load scryfall_common_creatures.csv');
+            return r.text();
+        }),
+        fetch('scryfall_equipment_rare_mythic.csv').then(r => {
+            if (!r.ok) throw new Error('Could not load scryfall_equipment_rare_mythic.csv');
+            return r.text();
+        }),
+    ]);
+
+    // ── Commons: deduplicate by front-face name, skip Alchemy (A-) cards ──
+    const commonsSeen = new Set();
+    COMMONS = [];
+    for (const row of parseCSV(commonsText)) {
+        const rawName = row['Name'] || '';
+        if (!rawName || rawName.startsWith('A-')) continue;
+        // Must be a creature (Type Line starts with "Creature")
+        const typeLine = row['Type Line'] || '';
+        if (!typeLine.startsWith('Creature')) continue;
+        const name = frontFaceName(rawName);
+        if (commonsSeen.has(name)) continue;
+        commonsSeen.add(name);
+        COMMONS.push(name);
+    }
+
+    // ── Equipment: keep only Legendary Equipment, deduplicate, skip A- cards ──
+    const equipSeen = new Set();
+    EQUIPMENT = [];
+    for (const row of parseCSV(equipmentText)) {
+        const rawName = row['Name'] || '';
+        if (!rawName || rawName.startsWith('A-')) continue;
+        const typeLine = row['Type Line'] || '';
+        // Must be both Legendary and Equipment
+        if (!typeLine.includes('Legendary') || !typeLine.includes('Equipment')) continue;
+        const name = frontFaceName(rawName);
+        if (equipSeen.has(name)) continue;
+        equipSeen.add(name);
+        EQUIPMENT.push(name);
+    }
+}
+
+// ─────────────────────────────────────────────
+// INIT — runs on page load
+// ─────────────────────────────────────────────
+async function init() {
+    const btns = document.querySelectorAll('.generate-btn');
+    btns.forEach(b => { b.disabled = true; b.textContent = '⏳ Loading card data…'; });
+
+    try {
+        await loadCardData();
+        btns.forEach(b => { b.disabled = false; });
+        btns[0].textContent = '⚔️ Generate My Pool';
+        if (btns[1]) btns[1].textContent = '🔄 Regenerate Pool';
+        document.getElementById('pool-stats').textContent =
+            `${COMMONS.length.toLocaleString()} eligible common creatures · ${EQUIPMENT.length} legendary equipment cards loaded`;
+    } catch (err) {
+        btns.forEach(b => { b.textContent = '⚠️ Failed to load — see console'; });
+        console.error(err);
+        document.getElementById('pool-stats').textContent =
+            '⚠️ Could not load CSV files. Make sure scryfall_common_creatures.csv and scryfall_equipment_rare_mythic.csv are in the same folder as index.html.';
+        document.getElementById('pool-stats').style.color = '#e57373';
+    }
+}
+
+// ─────────────────────────────────────────────
+// UTILITIES
+// ─────────────────────────────────────────────
+function getRandomSubset(arr, n) {
+    const shuffled = [...arr].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, n);
+}
+
+function makePoolId() {
+    return 'Pool #' + Math.floor(Math.random() * 900000 + 100000);
+}
+
+async function fetchCardData(cardName) {
+    try {
+        const res = await fetch(
+            `https://api.scryfall.com/cards/named?exact=${encodeURIComponent(cardName)}`
+        );
+        if (!res.ok) return null;
+        const d = await res.json();
+
+        let imageUrl = null;
+        if (d.image_uris) {
+            imageUrl = d.image_uris.normal;
+        } else if (d.card_faces && d.card_faces[0] && d.card_faces[0].image_uris) {
+            imageUrl = d.card_faces[0].image_uris.normal;
+        }
+
+        return { imageUrl, scryfallUrl: d.scryfall_uri };
+    } catch (e) {
+        return null;
+    }
+}
+
+async function loadCardInto(cardName, container) {
+    // Build DOM immediately with placeholder
+    const item = document.createElement('div');
+    item.className = 'card-item';
+
+    const link = document.createElement('a');
+    link.href = `https://scryfall.com/search?q=!%22${encodeURIComponent(cardName)}%22`;
+    link.target = '_blank';
+    link.title = `View ${cardName} on Scryfall`;
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'card-img-wrapper';
+    wrapper.innerHTML = `<div class="card-placeholder"><span class="spinner"></span>${cardName}</div>`;
+
+    link.appendChild(wrapper);
+    item.appendChild(link);
+
+    const nameEl = document.createElement('p');
+    nameEl.className = 'card-name';
+    nameEl.textContent = cardName;
+    item.appendChild(nameEl);
+
+    container.appendChild(item);
+
+    // Fetch and swap in image
+    const data = await fetchCardData(cardName);
+    if (data) {
+        if (data.scryfallUrl) link.href = data.scryfallUrl;
+        if (data.imageUrl) {
+            const img = new Image();
+            img.alt = cardName;
+            img.onload = () => { wrapper.innerHTML = ''; wrapper.appendChild(img); };
+            img.onerror = () => { wrapper.innerHTML = `<div class="card-placeholder">${cardName}</div>`; };
+            img.src = data.imageUrl;
+        }
+    } else {
+        wrapper.innerHTML = `<div class="card-placeholder">${cardName}<br><small style="color:#888">Check Scryfall</small></div>`;
+    }
+}
+
+async function displayCards(cards, containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    await Promise.all(cards.map(card => loadCardInto(card, container)));
+}
+
+// ─────────────────────────────────────────────
+// GENERATE
+// ─────────────────────────────────────────────
+async function generate() {
+    currentCommons   = getRandomSubset(COMMONS,    15);
+    currentEquipment = getRandomSubset(EQUIPMENT, 10);
+
+    const resultsDiv = document.getElementById('results');
+    resultsDiv.style.display = 'block';
+    document.getElementById('pool-id').textContent = makePoolId() + ' — ' + new Date().toLocaleDateString();
+
+    // Seed placeholders immediately then load images
+    await Promise.all([
+        displayCards(currentCommons,   'commons-grid'),
+        displayCards(currentEquipment, 'equipment-grid'),
+    ]);
+
+    resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Kick everything off when the page loads
+window.addEventListener('load', init);
+
+// ─────────────────────────────────────────────
+// COPY AS TEXT
+// ─────────────────────────────────────────────
+function copyPoolText() {
+    const poolId = document.getElementById('pool-id').textContent;
+    const arthurs  = currentCommons.map((c, i) => `  ${i+1}. ${c}`).join('\n');
+    const excals   = currentEquipment.map((e, i) => `  ${i+1}. ${e}`).join('\n');
+    const text =
+`⚔️ PENDRAGON POOL GENERATOR
+${poolId}
+
+ARTHURS — Common Creatures (pick one as your commander):
+${arthurs}
+
+EXCALIBURS — Legendary Equipment (pick one for your command zone):
+${excals}
+
+Rules: 98-card singleton deck, all commons. Color identity = Arthur + Excalibur combined.
+Starting life: 30 | Commander damage: 21
+Verify cards at: https://scryfall.com`;
+
+    navigator.clipboard.writeText(text).then(() => {
+        const el = document.getElementById('copy-ok');
+        el.classList.add('show');
+        setTimeout(() => el.classList.remove('show'), 2500);
+    });
+}
+</script>
+</body>
+</html>
