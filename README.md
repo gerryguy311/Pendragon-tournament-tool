@@ -34,7 +34,7 @@ Because every player's pool is randomly generated, no one can tune a perfect com
  
 Just open `index.html` in any browser, or visit the live GitHub Pages link below.
  
-**Live site:** `https://gerryguy311.github.io/Pendragon-tournament-tool`
+**Live site:** `[https://gerryguy311.github.io/Pendragon-tournament-tool`](https://gerryguy311.github.io/Pendragon-tournament-tool)
  
 ---
  
